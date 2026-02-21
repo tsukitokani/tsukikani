@@ -9,7 +9,6 @@
     --color-blog: #7ecef4;
 }
 
-/* ★追加：要素の幅に余白を含める（右側の余白・はみ出しを防止）★ */
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -22,7 +21,6 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    /* ★追加：スマホで画面が横にグラグラ動くのを完全に防ぐ */
     overflow-x: hidden;
 }
 html { scroll-behavior: smooth; overflow-x: hidden; }
@@ -230,4 +228,5 @@ footer { background-color: #333; color: #ccc; text-align: center; padding: 20px;
     .news-list li { font-size: 0.9rem; }
     .news-tag { font-size: 0.7rem; padding: 2px 6px; }
     .stage-image-container img { max-width: 100%; }
+
 }
