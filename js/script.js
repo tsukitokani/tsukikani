@@ -1,14 +1,13 @@
-/* --- 設定：スプレッドシートのURL --- */
 const BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS5QLlQgNmSFgE5kkuVnO6KrhfFItewNcij6760LQQ5V7Z5UIrzTkd05e49RNU0cGB3sLonmaeB4TBp/pub?';
 
-/* --- 共通：画像URL変換 --- */
+
 const formatImg = url => {
     if (!url || typeof url !== 'string') return ''; 
     const m = url.trim().match(/\/d\/(.+?)\//);
     return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1000` : url;
 };
 
-/* --- 1. ニュース読み込み --- */
+
 async function loadNews() {
     const list = document.getElementById('js-news-list');
     if (!list) return;
@@ -39,7 +38,7 @@ async function loadNews() {
     } catch (e) { list.innerHTML = '<li>現在、お知らせはありません。</li>'; }
 }
 
-/* --- 2. 次回公演読み込み --- */
+
 async function loadNextStage() {
     const container = document.getElementById('js-stage-detail');
     if (!container) return;
@@ -65,7 +64,7 @@ async function loadNextStage() {
     } catch (e) { container.innerHTML = '<p style="text-align:center;">COMING SOON...</p>'; }
 }
 
-/* --- 3. 過去公演読み込み --- */
+
 async function loadPastStages() {
     const container = document.getElementById('js-past-list');
     if (!container) return;
@@ -91,7 +90,7 @@ async function loadPastStages() {
     } catch (e) { }
 }
 
-/* --- 4. 劇団紹介読み込み --- */
+
 async function loadMembers() {
     const container = document.getElementById('js-member-accordion');
     if (!container) return;
@@ -119,7 +118,7 @@ async function loadMembers() {
     } catch (e) { }
 }
 
-/* --- 5. 外部参加情報 --- */
+
 async function loadExternal() {
     const container = document.getElementById('js-external-list');
     if (!container) return;
@@ -156,7 +155,7 @@ async function loadExternal() {
     } catch (e) { container.innerHTML = '<p style="text-align:center;">現在、情報はありません。</p>'; }
 }
 
-/* --- 補助機能・イベント設定 --- */
+
 function setupModal() {
     if (document.getElementById('js-image-modal')) return;
     const modalHtml = `<div id="js-image-modal" class="image-modal-overlay" onclick="this.style.display='none'"><img class="image-modal-content" id="js-modal-image"></div>`;
@@ -174,7 +173,7 @@ window.toggleAccordion = function(el) {
     else { content.style.maxHeight = content.scrollHeight + "px"; if(icon) icon.innerText = '-'; }
 };
 
-/* --- 実行・イベントリスナ --- */
+
 document.addEventListener('DOMContentLoaded', () => {
     loadNews(); loadNextStage(); loadPastStages(); loadMembers(); loadExternal(); setupModal();
 
