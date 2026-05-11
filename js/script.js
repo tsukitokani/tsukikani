@@ -1,7 +1,7 @@
 const BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS5QLlQgNmSFgE5kkuVnO6KrhfFItewNcij6760LQQ5V7Z5UIrzTkd05e49RNU0cGB3sLonmaeB4TBp/pub?';
 
 const formatImg = url => {
-    if (!url || typeof url !== 'string') return ''; 
+    if (!url || typeof url !== 'string') return '';
     const m = url.trim().match(/\/d\/(.+?)\//);
     return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1000` : url;
 };
@@ -17,21 +17,31 @@ async function loadNews() {
         const cols = row.split('\t');
         if (cols.length < 3) return;
         const date = cols[0] || '';
-        const tag = cols[1] || 'お知らせ';
-        const title = cols[2] || 'タイトルなし';
+        const tag = cols[1] || '';
+        const title = cols[2] || '';
         const url = cols[3]?.trim();
-        const link = url ? url : "#";
         
-        html += `
-        <li>
-            <a href="${link}">
-                <span class="news-date">${date}</span>
-                <span class="news-tag">${tag}</span>
-                <span class="news-title">${title}</span>
-            </a>
-        </li>`;
+        if (url && url !== '#' && url !== '') {
+            html += `
+            <li>
+                <a href="${url}">
+                    <span class="news-date">${date}</span>
+                    <span class="news-tag">${tag}</span>
+                    <span class="news-title">${title}</span>
+                </a>
+            </li>`;
+        } else {
+            html += `
+            <li>
+                <div class="news-content">
+                    <span class="news-date">${date}</span>
+                    <span class="news-tag">${tag}</span>
+                    <span class="news-title">${title}</span>
+                </div>
+            </li>`;
+        }
     });
-    list.innerHTML = html || '<li>現在、お知らせはありません。</li>';
+    list.innerHTML = html;
 }
 
 async function loadNextStage() {
@@ -117,7 +127,7 @@ async function loadExternal() {
     rows.forEach(row => {
         const cols = row.split('\t');
         if (cols.length < 2) return;
-        const title = cols[0] || 'タイトル未定';
+        const title = cols[0] || '';
         const date = cols[1] || '';
         const place = cols[2] || '';
         const detail = cols[3] || '';
@@ -137,7 +147,7 @@ async function loadExternal() {
             ${link && link.trim() !== '#' && link.trim() !== '' ? `<a href="${link}" target="_blank" style="color:var(--main-yellow); font-weight:800;">詳細へ →</a>` : ''}
         </div>`;
     });
-    container.innerHTML = html || '<p style="text-align:center;">現在、情報はありません。</p>';
+    container.innerHTML = html;
 }
 
 function setupModal() {
