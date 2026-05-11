@@ -99,16 +99,30 @@ img { max-width: 100%; height: auto; }
     padding: 15px 10px; 
     text-decoration: none; 
     color: white; 
+    position: relative;
 }
 
-.news-list li a { transition: background-color 0.3s; cursor: pointer; }
+.news-list li a { transition: background-color 0.3s; cursor: pointer; padding-right: 30px; }
 .news-list li a:hover { background-color: rgba(255, 255, 255, 0.1); }
 
 .news-date { font-weight: bold; min-width: 90px; white-space: nowrap; }
 .news-tag { background-color: white; color: var(--main-yellow); width: 90px; text-align: center; padding: 4px 0; border-radius: 2px; font-weight: 800; font-size: 0.8rem; flex-shrink: 0; }
 .news-title { flex-grow: 1; text-align: left; }
 
-.news-list li a::after { content: "＞"; font-weight: bold; margin-left: 10px; color: white; }
+.news-list li a::after { 
+    content: "＞"; 
+    font-weight: bold; 
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white; 
+}
+
+/* 一覧ページ用の矢印色調整 */
+#js-news-page-list li a::after {
+    color: var(--main-yellow);
+}
 
 .accordion-container { background-color: var(--main-blue); margin-top: 20px; }
 .accordion-item { border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
@@ -160,14 +174,11 @@ footer { background-color: #333; color: #ccc; text-align: center; padding: 20px;
         line-height: 1.4;
     }
     .news-list li a::after { 
-        display: none; 
-    }
-    .news-list li a .news-title::before {
-        content: "＞";
-        font-weight: bold;
-        margin-right: 8px;
-        color: white;
-        flex-shrink: 0;
+        display: block;
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
     }
 }
 
