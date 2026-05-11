@@ -82,6 +82,7 @@ img { max-width: 100%; height: auto; }
 .hero-section { display: flex; min-height: 500px; }
 .hero-left { width: 50%; display: flex; align-items: center; padding-left: 8%; background-color: var(--main-blue); color: white; }
 .hero-right { width: 50%; display: flex; justify-content: center; align-items: center; background-color: white; }
+.hero-right img { max-width: 60%; max-height: 400px; }
 .hero-text-content h1 { font-size: 4.5rem; color: white; margin: 10px 0; line-height: 1.2; }
 .hero-text-content p { color: white; font-size: 1.1rem; margin: 0; opacity: 0.9; }
 
