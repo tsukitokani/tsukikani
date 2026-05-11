@@ -17,6 +17,8 @@ async function loadNews() {
 
     let rows = text.split('\n').slice(1).map((row, index) => ({ data: row.split('\t'), id: index })).reverse();
 
+    rows = rows.filter(item => item.data[0] === '公開');
+
     if (list) {
         rows = rows.slice(0, 5);
     }
@@ -24,11 +26,11 @@ async function loadNews() {
     let html = '';
     rows.forEach(item => {
         const cols = item.data;
-        if (cols.length < 3) return;
-        const date = cols[0] || '';
-        const tag = cols[1] || '';
-        const title = cols[2] || '';
-        const contentOrUrl = cols[3]?.trim() || '';
+        if (cols.length < 4) return;
+        const date = cols[1] || '';
+        const tag = cols[2] || '';
+        const title = cols[3] || '';
+        const contentOrUrl = cols[4]?.trim() || '';
 
         let linkUrl = '';
         if (contentOrUrl.startsWith('http')) {
@@ -60,7 +62,7 @@ async function loadNews() {
             </li>`;
         }
     });
-    target.innerHTML = html;
+    target.innerHTML = html || '<li>現在、お知らせはありません。</li>';
 }
 
 async function loadArticle() {
@@ -77,13 +79,13 @@ async function loadArticle() {
     const rows = text.split('\n').slice(1);
 
     const cols = rows[articleId]?.split('\t');
-    if (!cols) return;
+    if (!cols || cols[0] !== '公開') return;
 
-    const date = cols[0] || '';
-    const tag = cols[1] || '';
-    const title = cols[2] || '';
-    const content = cols[3] || '';
-    const imgUrl = formatImg(cols[4]);
+    const date = cols[1] || '';
+    const tag = cols[2] || '';
+    const title = cols[3] || '';
+    const content = cols[4] || '';
+    const imgUrl = formatImg(cols[5]);
 
     let imgHtml = '';
     if (imgUrl) {
