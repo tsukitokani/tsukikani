@@ -140,11 +140,11 @@ async function loadPastStages() {
     let html = '';
     rows.forEach(row => {
         const cols = row.split('\t');
-        if (cols.length < 2) return;
-        const img1 = formatImg(cols[6]);
-        const img2 = formatImg(cols[7]);
+        if (cols.length < 3 || cols[0] !== '公開') return;
+        const img1 = formatImg(cols[7]);
+        const img2 = formatImg(cols[8]);
         html += `<div style="margin-bottom:50px; border-bottom:1px solid #ddd; padding-bottom:30px;">
-            <h3 style="color:var(--main-blue)">${cols[0]}『${cols[1]}』</h3><p>${cols[2]} @${cols[3]}</p>
+            <h3 style="color:var(--main-blue)">${cols[1]}『${cols[2]}』</h3><p>${cols[3]} @${cols[4]}</p>
             <div style="display:flex; gap:10px; overflow-x:auto; margin-top:10px;">
                 ${img1 ? `<img src="${img1}" loading="lazy" class="zoomable-image" onclick="openModal(this.src)" style="height:150px; cursor:zoom-in;">` : ''}
                 ${img2 ? `<img src="${img2}" loading="lazy" class="zoomable-image" onclick="openModal(this.src)" style="height:150px; cursor:zoom-in;">` : ''}
@@ -163,10 +163,10 @@ async function loadMembers() {
     const groups = {};
     rows.forEach(row => {
         const cols = row.split('\t');
-        if (cols.length < 2) return;
-        const term = cols[0].trim();
+        if (cols.length < 3 || cols[0] !== '公開') return;
+        const term = cols[1].trim();
         if (!groups[term]) groups[term] = [];
-        groups[term].push({ name: cols[1], role: cols[2] || '' });
+        groups[term].push({ name: cols[2], role: cols[3] || '' });
     });
     let html = '';
     Object.keys(groups).sort().forEach(term => {
@@ -188,14 +188,14 @@ async function loadExternal() {
     let html = '';
     rows.forEach(row => {
         const cols = row.split('\t');
-        if (cols.length < 2) return;
-        const title = cols[0] || '';
-        const date = cols[1] || '';
-        const place = cols[2] || '';
-        const detail = cols[3] || '';
-        const img1 = formatImg(cols[4]);
-        const img2 = formatImg(cols[5]);
-        const link = cols[6];
+        if (cols.length < 3 || cols[0] !== '公開') return;
+        const title = cols[1] || '';
+        const date = cols[2] || '';
+        const place = cols[3] || '';
+        const detail = cols[4] || '';
+        const img1 = formatImg(cols[5]);
+        const img2 = formatImg(cols[6]);
+        const link = cols[7];
 
         html += `<div style="padding:20px; border-left:5px solid var(--main-yellow); background:#f9f9f9; margin-bottom:20px;">
             <h3 style="margin:0 0 5px 0; color:var(--text-black);">${title}</h3>
