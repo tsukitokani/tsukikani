@@ -8,40 +8,100 @@ const formatImg = url => {
 
 async function loadNews() {
     const list = document.getElementById('js-news-list');
-    if (!list) return;
+    const pageList = document.getElementById('js-news-page-list');
+    const target = list || pageList;
+    if (!target) return;
+
     const res = await fetch(`${BASE_URL}gid=0&single=true&output=tsv&t=${new Date().getTime()}`);
     const text = await res.text();
-    const rows = text.split('\n').slice(1).reverse().slice(0, 5);
+
+    let rows = text.split('\n').slice(1).map((row, index) => ({ data: row.split('\t'), id: index })).reverse();
+
+    if (list) {
+        rows = rows.slice(0, 5);
+    }
+
     let html = '';
-    rows.forEach(row => {
-        const cols = row.split('\t');
+    rows.forEach(item => {
+        const cols = item.data;
         if (cols.length < 3) return;
         const date = cols[0] || '';
         const tag = cols[1] || '';
         const title = cols[2] || '';
-        const url = cols[3]?.trim();
-        
-        if (url && url !== '#' && url !== '') {
+        const contentOrUrl = cols[3]?.trim() || '';
+
+        let linkUrl = '';
+        if (contentOrUrl.startsWith('http')) {
+            linkUrl = contentOrUrl;
+        } else if (contentOrUrl !== '') {
+            linkUrl = `article.html?id=${item.id}`;
+        }
+
+        const colorStyle = pageList ? 'style="color:#333; border-bottom:1px solid #ddd;"' : '';
+        const tagStyle = pageList ? 'style="background:var(--main-yellow); color:white;"' : '';
+
+        if (linkUrl) {
             html += `
             <li>
-                <a href="${url}">
+                <a href="${linkUrl}" ${colorStyle} ${linkUrl.startsWith('http') ? 'target="_blank"' : ''}>
                     <span class="news-date">${date}</span>
-                    <span class="news-tag">${tag}</span>
+                    <span class="news-tag" ${tagStyle}>${tag}</span>
                     <span class="news-title">${title}</span>
                 </a>
             </li>`;
         } else {
             html += `
             <li>
-                <div class="news-content">
+                <div class="news-content" ${colorStyle}>
                     <span class="news-date">${date}</span>
-                    <span class="news-tag">${tag}</span>
+                    <span class="news-tag" ${tagStyle}>${tag}</span>
                     <span class="news-title">${title}</span>
                 </div>
             </li>`;
         }
     });
-    list.innerHTML = html;
+    target.innerHTML = html;
+}
+
+async function loadArticle() {
+    const container = document.getElementById('js-article-content');
+    if (!container) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const articleId = params.get('id');
+
+    if (articleId === null) return;
+
+    const res = await fetch(`${BASE_URL}gid=0&single=true&output=tsv&t=${new Date().getTime()}`);
+    const text = await res.text();
+    const rows = text.split('\n').slice(1);
+
+    const cols = rows[articleId]?.split('\t');
+    if (!cols) return;
+
+    const date = cols[0] || '';
+    const tag = cols[1] || '';
+    const title = cols[2] || '';
+    const content = cols[3] || '';
+    const imgUrl = formatImg(cols[4]);
+
+    let imgHtml = '';
+    if (imgUrl) {
+        imgHtml = `<div style="text-align:center; margin-bottom: 30px;"><img src="${imgUrl}" style="max-height:400px; border-radius:8px;" alt=""></div>`;
+    }
+
+    container.innerHTML = `
+        <div style="margin-bottom: 20px; border-bottom: 2px solid var(--main-yellow); padding-bottom: 15px;">
+            <span class="news-tag" style="background:var(--main-yellow); color:white; display:inline-block; margin-bottom:10px; padding: 4px 12px; border-radius: 2px; font-weight: 800; font-size: 0.8rem;">${tag}</span>
+            <span style="font-weight:bold; color:#666; margin-left:15px;">${date}</span>
+            <h2 style="font-size: 1.8rem; margin: 10px 0 0 0; line-height: 1.4;">${title}</h2>
+        </div>
+        ${imgHtml}
+        <div style="line-height: 1.8; font-size: 1.1rem; white-space: pre-wrap;">${content}</div>
+        <div style="text-align: center; margin-top: 50px;">
+            <a href="index.html" style="display:inline-block; padding: 10px 30px; background:var(--main-blue); color:white; border-radius:30px; font-weight:bold;">← ホームに戻る</a>
+        </div>
+    `;
 }
 
 async function loadNextStage() {
@@ -155,11 +215,13 @@ function setupModal() {
     const modalHtml = `<div id="js-image-modal" class="image-modal-overlay" onclick="this.style.display='none'"><img class="image-modal-content" id="js-modal-image"></div>`;
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
+
 window.openModal = function(src) {
     const modal = document.getElementById('js-image-modal');
     const img = document.getElementById('js-modal-image');
     if(modal && img) { img.src = src; modal.style.display = 'block'; }
 };
+
 window.toggleAccordion = function(el) {
     const content = el.nextElementSibling;
     const icon = el.querySelector('.icon');
@@ -168,7 +230,7 @@ window.toggleAccordion = function(el) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadNews(); loadNextStage(); loadPastStages(); loadMembers(); loadExternal(); setupModal();
+    loadNews(); loadNextStage(); loadPastStages(); loadMembers(); loadExternal(); loadArticle(); setupModal();
 
     const hamBtn = document.getElementById('js-hamburger');
     const nav = document.getElementById('js-nav');
