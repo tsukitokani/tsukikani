@@ -16,12 +16,9 @@ async function loadNews() {
     const text = await res.text();
 
     let rows = text.split('\n').slice(1).map((row, index) => ({ data: row.split('\t'), id: index })).reverse();
-
     rows = rows.filter(item => item.data[0] === '公開');
 
-    if (list) {
-        rows = rows.slice(0, 5);
-    }
+    if (list) { rows = rows.slice(0, 5); }
 
     let html = '';
     rows.forEach(item => {
@@ -48,7 +45,7 @@ async function loadNews() {
                 <a href="${linkUrl}" ${colorStyle} ${linkUrl.startsWith('http') ? 'target="_blank"' : ''}>
                     <span class="news-date">${date}</span>
                     <span class="news-tag" ${tagStyle}>${tag}</span>
-                    <span class="news-title">${title}</span>
+                    <span class="news-title">＞ ${title}</span>
                 </a>
             </li>`;
         } else {
@@ -57,7 +54,7 @@ async function loadNews() {
                 <div class="news-content" ${colorStyle}>
                     <span class="news-date">${date}</span>
                     <span class="news-tag" ${tagStyle}>${tag}</span>
-                    <span class="news-title">${title}</span>
+                    <span class="news-title">＞ ${title}</span>
                 </div>
             </li>`;
         }
@@ -71,7 +68,6 @@ async function loadArticle() {
 
     const params = new URLSearchParams(window.location.search);
     const articleId = params.get('id');
-
     if (articleId === null) return;
 
     const res = await fetch(`${BASE_URL}gid=0&single=true&output=tsv&t=${new Date().getTime()}`);
@@ -127,9 +123,7 @@ async function loadNextStage() {
                 <p style="white-space:pre-wrap;"><b>キャスト/スタッフ：</b>\n${cols[8]}</p>
             </div>`;
         setupModal();
-    } else { 
-        container.innerHTML = '<p style="text-align:center;">COMING SOON...</p>'; 
-    }
+    } else { container.innerHTML = '<p style="text-align:center;">COMING SOON...</p>'; }
 }
 
 async function loadPastStages() {
@@ -197,7 +191,6 @@ async function loadExternal() {
         const img1 = formatImg(cols[5]);
         const img2 = formatImg(cols[6]);
         const link = cols[7];
-
         html += `<div style="padding:20px; border-left:5px solid var(--main-yellow); background:#f9f9f9; margin-bottom:20px;">
             <h3 style="margin:0 0 5px 0; color:var(--text-black);">${title}</h3>
             <small style="color:#666; display:block; margin-bottom:10px;">${date}</small>
@@ -215,16 +208,13 @@ async function loadExternal() {
 
 function setupModal() {
     if (document.getElementById('js-image-modal')) return;
-    const modalHtml = `<div id="js-image-modal" class="image-modal-overlay" onclick="this.style.display='none'"><img class="image-modal-content" id="js-modal-image"></div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.body.insertAdjacentHTML('beforeend', `<div id="js-image-modal" class="image-modal-overlay" onclick="this.style.display='none'"><img class="image-modal-content" id="js-modal-image"></div>`);
 }
-
 window.openModal = function(src) {
     const modal = document.getElementById('js-image-modal');
     const img = document.getElementById('js-modal-image');
     if(modal && img) { img.src = src; modal.style.display = 'block'; }
 };
-
 window.toggleAccordion = function(el) {
     const content = el.nextElementSibling;
     const icon = el.querySelector('.icon');
@@ -234,31 +224,15 @@ window.toggleAccordion = function(el) {
 
 document.addEventListener('DOMContentLoaded', () => {
     loadNews(); loadNextStage(); loadPastStages(); loadMembers(); loadExternal(); loadArticle(); setupModal();
-
     const hamBtn = document.getElementById('js-hamburger');
     const nav = document.getElementById('js-nav');
     if(hamBtn && nav) {
-        hamBtn.addEventListener('click', () => {
-            hamBtn.classList.toggle('active');
-            nav.classList.toggle('active');
-        });
-        nav.querySelectorAll('a').forEach(a => {
-            a.addEventListener('click', () => {
-                hamBtn.classList.remove('active');
-                nav.classList.remove('active');
-            });
-        });
+        hamBtn.addEventListener('click', () => { hamBtn.classList.toggle('active'); nav.classList.toggle('active'); });
+        nav.querySelectorAll('a').forEach(a => { a.addEventListener('click', () => { hamBtn.classList.remove('active'); nav.classList.remove('active'); }); });
     }
-
     const topBtn = document.getElementById('page-top-btn');
     if(topBtn) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) { topBtn.classList.add('show'); }
-            else { topBtn.classList.remove('show'); }
-        });
-        topBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        window.addEventListener('scroll', () => { if (window.scrollY > 300) { topBtn.classList.add('show'); } else { topBtn.classList.remove('show'); } });
+        topBtn.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
     }
 });
