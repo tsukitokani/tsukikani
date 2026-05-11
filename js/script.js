@@ -100,8 +100,9 @@ async function loadArticle() {
         </div>
         ${imgHtml}
         <div style="line-height: 1.8; font-size: 1.1rem; white-space: pre-wrap;">${content}</div>
-        <div style="text-align: center; margin-top: 50px;">
+        <div style="text-align: center; margin-top: 50px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
             <a href="index.html" style="display:inline-block; padding: 10px 30px; background:var(--main-blue); color:white; border-radius:30px; font-weight:bold;">← ホームに戻る</a>
+            <a href="news.html" style="display:inline-block; padding: 10px 30px; background:var(--main-yellow); color:white; border-radius:30px; font-weight:bold;">一覧を見る</a>
         </div>
     `;
 }
