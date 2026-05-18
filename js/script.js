@@ -106,24 +106,62 @@ async function loadArticle() {
 async function loadNextStage() {
     const container = document.getElementById('js-stage-detail');
     if (!container) return;
+    
     const res = await fetch(`${BASE_URL}gid=2122620919&single=true&output=tsv&t=${new Date().getTime()}`);
     const text = await res.text();
     const cols = text.split('\n')[1].split('\t');
+    
     if (cols && cols[0] === '公開') {
+        const groupName = cols[1] || '愛知淑徳大学演劇研究会「月とカニ」';
+        const titleText = cols[2]?.trim() ? `『${cols[2]}』` : '';
+        
+        const date = cols[3]?.trim() || '';
+        const place = cols[4]?.trim() || '';
+        const castStaff = cols[8]?.trim() || '';
+        const price = cols[10]?.trim() || '';
+        
         const img1 = formatImg(cols[5]);
         const img2 = formatImg(cols[6]);
-        container.innerHTML = `
-            <h2 style="color:var(--hero-blue)">${cols[1]}『${cols[2]}』</h2>
-            <div style="background:#f9f9f9; padding:30px; border-radius:10px; margin-top:20px;">
-                <div class="stage-image-container">
-                    ${img1 ? `<img src="${img1}" onclick="openModal(this.src)">` : ''}
-                    ${img2 ? `<img src="${img2}" onclick="openModal(this.src)">` : ''}
-                </div>
-                <p style="white-space:pre-wrap;"><b>日時：</b>${cols[3]}\n<b>会場：</b>${cols[4]}\n<b>料金：</b>${cols[10]}</p>
-                <p style="white-space:pre-wrap;"><b>キャスト/スタッフ：</b>\n${cols[8]}</p>
+        
+        let imgHtml = '';
+        if (img1 || img2) {
+            imgHtml = `
+            <div class="stage-image-container">
+                ${img1 ? `<img src="${img1}" onclick="openModal(this.src)">` : ''}
+                ${img2 ? `<img src="${img2}" onclick="openModal(this.src)">` : ''}
             </div>`;
-        setupModal();
-    } else { container.innerHTML = '<p style="text-align:center;">COMING SOON...</p>'; }
+        }
+        
+        let infoHtml = '';
+        if (date) infoHtml += `<b>日時：</b>${date}\n`;
+        if (place) infoHtml += `<b>会場：</b>${place}\n`;
+        if (price) infoHtml += `<b>料金：</b>${price}\n`;
+        
+        let contentHtml = '';
+        if (infoHtml) {
+            contentHtml += `<p style="white-space:pre-wrap; margin-top:15px; margin-bottom:0;">${infoHtml.trim()}</p>`;
+        }
+        if (castStaff) {
+            if (infoHtml) {
+                contentHtml += `<hr style="border:0; border-top:1px solid #ddd; margin:20px 0;">`;
+            }
+            contentHtml += `<p style="white-space:pre-wrap; margin-bottom:0;"><b>キャスト / スタッフ：</b>\n${castStaff}</p>`;
+        }
+        
+        if (titleText || imgHtml || contentHtml) {
+            container.innerHTML = `
+                <h2 style="color:var(--hero-blue)">${groupName}${titleText ? `<br class="sp-only">${titleText}` : ''}</h2>
+                <div style="background:#f9f9f9; padding:30px; border-radius:10px; margin-top:20px;">
+                    ${imgHtml}
+                    ${contentHtml}
+                </div>`;
+            setupModal();
+        } else {
+            container.innerHTML = '<p style="text-align:center; padding: 60px 0; font-size:1.2rem; color:#999; font-weight:bold;">COMING SOON...</p>';
+        }
+    } else { 
+        container.innerHTML = '<p style="text-align:center; padding: 60px 0; font-size:1.2rem; color:#999; font-weight:bold;">COMING SOON...</p>'; 
+    }
 }
 
 async function loadPastStages() {
